@@ -8,16 +8,49 @@
 import SwiftUI
 
 struct ContentView: View {
+    var vehicleEmojis = ["🚗","🚕","🚙","🚛","🚒","🚐","🛻","🚜","🚓","🏎","🚎","🚌","🚑","🛺","🚃","🚋","🛵"]
+    @State var emojiCount = 4
+    
     var body: some View {
-//        Horizontal Stack
-        HStack {
-            CardView()
-            CardView()
-            CardView()
-            CardView()
+        VStack {
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))]) {
+                    ForEach(vehicleEmojis[0..<emojiCount], id: \.self) {
+                        emoji in CardView(cardContent: emoji)
+                            .aspectRatio(2/3, contentMode: .fit)
+                    }
+                }
+            }
+            HStack {
+                remove
+                Spacer()
+                add
+            }
         }
-        .foregroundColor(.blue)
-        .padding()
+        .padding(.horizontal)
+    }
+    
+    var add: some View {
+        Button(action: {
+            if emojiCount < vehicleEmojis.count {
+                emojiCount += 1
+            }
+        }, label: {
+            Image(systemName: "plus")
+                .resizable(resizingMode: .stretch)
+                .frame(width: 30, height: 30)
+        }).padding()
+    }
+    var remove: some View {
+        Button(action: {
+            if emojiCount > 1 {
+                emojiCount -= 1
+            }
+        }, label: {
+            Image(systemName: "minus")
+                .resizable(resizingMode: .stretch)
+                .frame(width: 30, height: 3)
+        }).padding(.horizontal)
     }
 }
 
@@ -25,14 +58,13 @@ struct  CardView: View {
     var cardContent: String
     @State var isFaceUp = true
     var body: some View{
-        
-//        Z Plane Stack: stacking forward towards you
+
         ZStack {
             let cardShape = RoundedRectangle(cornerRadius: 20)
             
             if isFaceUp {
                 cardShape.fill().foregroundColor(.white)
-                cardShape.stroke(lineWidth: 3)
+                cardShape.strokeBorder(lineWidth: 3)
                 
                 Text(cardContent).font(.largeTitle)
                 
